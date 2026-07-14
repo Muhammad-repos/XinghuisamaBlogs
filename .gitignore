@@ -26,3 +26,6 @@ manager/package-lock.json
 
 # manager 控制台为本地工具，不部署到 Vercel；移出以避免 Vercel 框架检测冲突
 manager/
+
+# manager 控制台为本地工具，不部署到 Vercel；移出以避免 Vercel 框架检测冲突
+manager/
