@@ -1,5 +1,4 @@
-// siteConfig.ts - 你的全站"控制中心"
-// [deployed 2026-07-14]
+// siteConfig.ts - 你的全站“控制中心”
 
 export const siteConfig = {
   // 1. 网站标题与博主信息
@@ -30,7 +29,7 @@ export const siteConfig = {
 
   // 5. 首页照片墙预览图
   photoWallImage: "https://bu.dusays.com/2026/03/24/69c1e38b4c370.jpg",
-  cloudMusicIds: ["1809646618", "3361076230", "1859390262", "4152474", "3356620687"],
+  cloudMusicIds: ["1809646618", "3361076230", "1859390262"],
   social: {
     github: "https://github.com/heiehiehi",
     gitee: "https://github.com/heiehiehi",
