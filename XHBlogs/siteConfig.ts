@@ -1,4 +1,5 @@
-// siteConfig.ts - 你的全站“控制中心”
+// siteConfig.ts - 你的全站"控制中心"
+// [deployed 2026-07-14]
 
 export const siteConfig = {
   // 1. 网站标题与博主信息
