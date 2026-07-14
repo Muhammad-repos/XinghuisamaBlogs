@@ -11,6 +11,19 @@ export type Project = {
 
 export const projectsData: Project[] = [
   {
+    "id": "proj_1784031914853",
+    "name": "Qt-Wechat",
+    "githubUrl": "https://github.com/Muhammad-repos/Pyside-Wechat.git",
+    "description": "Wechat  via Qt for Python ,",
+    "icon": "🚀",
+    "tags": [
+      "Pyside6",
+      "",
+      "Python",
+      ""
+    ]
+  },
+  {
     "id": "proj_1775049332705",
     "name": "Computational Chemistry Tool",
     "githubUrl": "https://github.com/heiehiehi/Computational_Chemistry_Tool",
@@ -20,5 +33,5 @@ export const projectsData: Project[] = [
       "Gromacs",
       "RMSF"
     ]
-  },
+  }
 ];
