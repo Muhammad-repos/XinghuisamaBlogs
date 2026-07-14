@@ -2,12 +2,12 @@
 
 export const siteConfig = {
   // 1. 网站标题与博主信息
-  title: "穆哈麦提·麦合木提 的技术小站",
+  title: "Muhammad 的技术小站",
   faviconUrl: "https://bu.dusays.com/2026/03/24/69c1e38ac1846.jpg",
-  authorName: "穆哈麦提·麦合木提",
-  bio: "水利工程师 / 开发者，专注水利信息化、工程计算软件与行业智能化系统开发。",
+  authorName: "Muhammad",
+  bio: "水利工程在读，备考间隙写点代码。这里记录学习、工程与生活的碎片。",
 
-  navTitle: "穆哈麦提·麦合木提",
+  navTitle: "Muhammad",
 
   // 👇 【新增】导航栏中间的那个后缀/分隔符（默认是 の）
   navSuffix: "的",
@@ -31,8 +31,8 @@ export const siteConfig = {
   photoWallImage: "https://bu.dusays.com/2026/03/24/69c1e38b4c370.jpg",
   cloudMusicIds: ["1809646618", "3361076230", "1859390262", "1696815", "3356620687", "3321571106", "4152474", "2619422260", "413188033", "61990"],
   social: {
-    github: "https://github.com/Mhmt-Mhmt",
-    gitee: "https://github.com/Mhmt-Mhmt",
+    github: "https://github.com/Muhammad-repos",
+    gitee: "https://gitee.com/Mhmt",
     google: "mailto:1272167775@qq.com",
     email: "1272167775@qq.com",
     qq: "1272167775",
@@ -42,11 +42,11 @@ export const siteConfig = {
     photos: 128, // 照片墙数量可以手动写死或动态计算
   },
   chatterTitle: "云端杂谈", // 你可以改成任何你喜欢的名字
-  chatterDescription: "水利、代码与生活的碎片记录",
+  chatterDescription: "备考、代码与生活的随手记录",
 
 
   // 👇 【新增】：全局背景弹幕配置
-  danmakuList: ["在干嘛呢？", "水利计算跑完了吗？", "调洪算得动不？", "代码写完了吗？", "今天也在搬砖", "Python 炼丹中...", "画图出图中", "水库调度研究中", "睡大觉中", "到底在干嘛？"],
+  danmakuList: ["Keep going.", "One page at a time.", "Back to the books.", "Study session on.", "Almost there.", "Coffee and code.", "Reviewing notes.", "Small steps daily.", "Stay focused.", "Reading chapter 5.", "Exam prep mode.", "Tomorrow is a new day."],
   gitalkConfig: {
     clientID: "",
     clientSecret: "",
@@ -66,6 +66,6 @@ export const siteConfig = {
     maxOutputTokens: 150,
     temperature: 0.85,
   },
-  friendLinkApplyFormat: "名称：穆哈麦提·麦合木提 的技术小站\n简介：水利信息化与工程计算软件开发者\n链接：（请填写你的域名）\n头像：（请填写你的头像）",
+  friendLinkApplyFormat: "名称：Muhammad 的技术小站\n简介：水利工程在读，备考与代码开发\n链接：（请填写你的域名）\n头像：（请填写你的头像）",
   enableLevelSystem: true,
 };
