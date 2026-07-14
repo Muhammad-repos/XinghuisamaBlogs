@@ -29,7 +29,7 @@ export const siteConfig = {
 
   // 5. 首页照片墙预览图
   photoWallImage: "https://bu.dusays.com/2026/03/24/69c1e38b4c370.jpg",
-  cloudMusicIds: ["1809646618", "3361076230", "1859390262", "1696815"],
+  cloudMusicIds: ["1809646618", "3361076230", "1859390262", "1696815", "3356620687"],
   social: {
     github: "https://github.com/heiehiehi",
     gitee: "https://github.com/heiehiehi",
@@ -68,4 +68,5 @@ export const siteConfig = {
   },
   friendLinkApplyFormat: "名称：XingHuiSamaの宝藏之地\n简介：今天我也要学习吗\n链接：https://www.xinghuisama.top\n头像：https://bu.dusays.com/2026/03/24/69c1e38ac1846.jpg",
   enableLevelSystem: true,
-};
+};// test sync 1784025621
+// verify-chain 1784026342
