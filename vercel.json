@@ -1,0 +1,1 @@
+{"installCommand": "cd XHBlogs && npm install", "buildCommand": "cd XHBlogs && npm run build", "outputDirectory": "XHBlogs/.next"}
