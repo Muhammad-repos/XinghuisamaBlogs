@@ -129,8 +129,8 @@ def main():
     content_paths = SYNC_DIRS + SYNC_FILES
     run(["git", "add"] + content_paths)
 
-    # Commit (tolerate "nothing to commit").
-    run(['git commit -m "Auto publish content via one-click script" || echo NO_CHANGES'], cwd=ROOT)
+    # Commit (tolerate "nothing to commit"). Pass as string so the `||` works.
+    run('git commit -m "Auto publish content via one-click script" || echo NO_CHANGES', cwd=ROOT)
 
     # Push: prefer the console-generated source key, else default SSH key.
     ssh_dir = os.path.expanduser("~/.ssh")
