@@ -51,30 +51,64 @@ export default function CloudPlayer({ songIds }: { songIds: string[] }) {
     let isMounted = true;
     const fetchMusicData = async () => {
       try {
-        const fetchPromises = songIds.map(id =>
-          fetch(`https://api.injahow.cn/meting/?server=netease&type=song&id=${id}`)
-            .then(res => { if (!res.ok) throw new Error("API 异常"); return res.json(); })
-            .catch(err => null)
-        );
+        const fetchPromises = songIds.map(async (id) => {
+          try {
+            const songRes = await fetch(`https://api.injahow.cn/meting/?server=netease&type=song&id=${id}`);
+            if (!songRes.ok) return null;
+            const songArr = await songRes.json();
+            if (!songArr || !songArr.length) return null;
+            const meta = songArr[0];
+
+            // 解析真实可播放地址；VIP / 版权歌曲此处会返回空或非音频内容
+            let src: string | null = null;
+            try {
+              const urlRes = await fetch(`https://api.injahow.cn/meting/?server=netease&type=url&id=${id}`);
+              if (urlRes.ok) {
+                const ct = urlRes.headers.get('content-type') || '';
+                const text = (await urlRes.text()).trim();
+                if (ct.includes('audio') || /^https?:\/\//.test(text)) src = text;
+              }
+            } catch {
+              /* 解析失败视为会员专享曲 */
+            }
+
+            return {
+              id: meta.id,
+              title: meta.name || '未知歌曲',
+              artist: meta.artist || '未知歌手',
+              cover: meta.cover || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=300',
+              src,
+              vip: !src,
+              lrcUrl: meta.lrc,
+            };
+          } catch {
+            return null;
+          }
+        });
         const results = await Promise.all(fetchPromises);
         const mergedPlaylist = results
-          .filter(res => res && res.length > 0)
-          .map(res => {
-            const song = res[0];
-            return {
-              id: song.id,
-              title: song.name || '未知歌曲',
-              artist: song.artist || '未知歌手',
-              cover: song.cover || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=300',
-              src: song.url,
-              lrcUrl: song.lrc
-            };
-          })
-          .filter(song => song.src);
+          .filter((r): r is NonNullable<typeof r> => !!r)
+          .map(r => ({
+            id: r.id,
+            title: r.title,
+            artist: r.artist,
+            cover: r.cover,
+            src: r.src,
+            vip: r.vip,
+            lrcUrl: r.lrcUrl,
+          }));
 
         if (isMounted) {
           if (mergedPlaylist.length > 0) {
+            const vipCount = mergedPlaylist.filter(s => s.vip).length;
             setPlaylist(mergedPlaylist);
+            if (vipCount > 0) {
+              setCurrentLyric(
+                vipCount >= mergedPlaylist.length
+                  ? "列表歌曲多为会员专享，暂不支持在线播放"
+                  : `已识别 ${vipCount} 首会员专享歌曲，自动跳过`
+              );
+            }
           } else {
             setCurrentLyric("音乐流被拦截，可能是版权限制");
           }
@@ -114,7 +148,7 @@ export default function CloudPlayer({ songIds }: { songIds: string[] }) {
       setCurrentLyric("♪ 纯音乐，请欣赏 ♪");
     }
 
-    if (isPlaying && audioRef.current) {
+    if (isPlaying && audioRef.current && !currentSong.vip) {
       setTimeout(() => audioRef.current?.play().catch(() => setIsPlaying(false)), 150);
     }
     return () => { isMounted = false; };
@@ -135,6 +169,11 @@ export default function CloudPlayer({ songIds }: { songIds: string[] }) {
   }, [currentLyric]);
 
   const togglePlay = () => {
+    const song = playlist[currentIndex];
+    if (song?.vip) {
+      setCurrentLyric("该歌曲为会员专享，暂不支持在线播放");
+      return;
+    }
     if (audioRef.current) {
       if (isPlaying) audioRef.current.pause();
       else audioRef.current.play().catch(() => setIsPlaying(false));
@@ -203,7 +242,7 @@ export default function CloudPlayer({ songIds }: { songIds: string[] }) {
 
       {/* 音乐播放器卡片主体：加入 dark 模式背景适配 */}
       <div className="md:col-span-5 rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-6 flex flex-col justify-between transition-all duration-700 hover:scale-[1.02] relative group overflow-hidden min-h-[220px]">
-        <audio ref={audioRef} src={currentSong.src} onTimeUpdate={handleTimeUpdate} onEnded={nextSong} onLoadedMetadata={handleTimeUpdate} />
+        <audio ref={audioRef} src={currentSong.vip ? undefined : currentSong.src} onTimeUpdate={handleTimeUpdate} onEnded={nextSong} onLoadedMetadata={handleTimeUpdate} />
         <div className={`absolute -top-20 -right-20 w-48 h-48 bg-indigo-500/20 blur-[50px] rounded-full transition-opacity duration-1000 ${isPlaying ? 'opacity-100' : 'opacity-30'}`}></div>
 
         <div className="flex items-center gap-5 relative z-10 mb-6 mt-2">
@@ -218,7 +257,10 @@ export default function CloudPlayer({ songIds }: { songIds: string[] }) {
               <span className="text-xs font-bold text-slate-600 dark:text-slate-300 bg-white/40 dark:bg-slate-700/50 px-2 rounded-full transition-colors duration-700">{currentIndex + 1} / {playlist.length}</span>
             </div>
             {/* 【修改点】：歌曲标题和歌手加上暗色模式字体 */}
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white truncate drop-shadow-sm transition-colors duration-700">{currentSong.title}</h3>
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white truncate drop-shadow-sm transition-colors duration-700 flex items-center gap-2">
+              {currentSong.title}
+              {currentSong.vip && <span className="text-[10px] font-black text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/40 px-1.5 py-0.5 rounded shrink-0">会员专享</span>}
+            </h3>
             <p className="text-sm text-slate-700 dark:text-slate-300 font-medium truncate drop-shadow-sm transition-colors duration-700">{currentSong.artist}</p>
           </div>
         </div>
