@@ -1,0 +1,18 @@
+# ===== WorkBuddy / 本地工具链（不要提交） =====
+.workbuddy/
+__pycache__/
+*.pyc
+
+# ===== Python 虚拟环境 =====
+.venv/
+my-blog-manager/.venv/
+venv/
+
+# ===== 依赖（已由 package-lock 锁定，不提交安装目录） =====
+node_modules/
+my-blog-manager/node_modules/
+
+# ===== 系统/编辑器 =====
+.DS_Store
+Thumbs.db
+*.swp
