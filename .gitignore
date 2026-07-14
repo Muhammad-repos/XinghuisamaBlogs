@@ -19,3 +19,7 @@ manager/node_modules/
 .DS_Store
 Thumbs.db
 *.swp
+
+# manager 是本地控制台（不部署到 Vercel），排除其 package.json 避免 Vercel 框架检测冲突
+manager/package.json
+manager/package-lock.json
