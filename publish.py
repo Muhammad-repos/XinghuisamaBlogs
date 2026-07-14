@@ -23,8 +23,8 @@ import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-MGR = os.path.join(ROOT, "my-blog-manager")
-XH = os.path.join(ROOT, "XHBlogs")
+MGR = os.path.join(ROOT, "manager")
+XH = ROOT  # blog is at repo root after restructuring
 
 SYNC_DIRS = ["posts", "chatters", "moments"]
 SYNC_FILES = [
@@ -104,7 +104,7 @@ def ensure_gitignore():
     if os.path.exists(path):
         with open(path, "r", encoding="utf-8") as f:
             existing = f.read()
-    needed = [".workbuddy/", "my-blog-manager/.venv/"]
+    needed = [".workbuddy/", "manager/.venv/"]
     add = [n for n in needed if n not in existing]
     if add:
         with open(path, "a", encoding="utf-8") as f:
@@ -113,7 +113,7 @@ def ensure_gitignore():
 
 
 def main():
-    print("=== Step 1: mirror console data -> XHBlogs ===")
+    print("=== Step 1: mirror console data -> blog (root) ===")
     for d in SYNC_DIRS:
         sync_tree(os.path.join(MGR, d), os.path.join(XH, d))
     for f in SYNC_FILES:
@@ -126,9 +126,7 @@ def main():
     ensure_gitignore()
 
     os.chdir(ROOT)
-    content_paths = [os.path.join("XHBlogs", d) for d in SYNC_DIRS] + [
-        os.path.join("XHBlogs", f) for f in SYNC_FILES
-    ]
+    content_paths = SYNC_DIRS + SYNC_FILES
     run(["git", "add"] + content_paths)
 
     # Commit (tolerate "nothing to commit").

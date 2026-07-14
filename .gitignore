@@ -5,12 +5,15 @@ __pycache__/
 
 # ===== Python 虚拟环境 =====
 .venv/
-my-blog-manager/.venv/
+manager/.venv/
 venv/
 
 # ===== 依赖（已由 package-lock 锁定，不提交安装目录） =====
 node_modules/
-my-blog-manager/node_modules/
+manager/node_modules/
+
+# ===== Next.js 构建缓存 =====
+.next/
 
 # ===== 系统/编辑器 =====
 .DS_Store
