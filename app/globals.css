@@ -95,3 +95,12 @@ input[type=range]::-webkit-slider-thumb {
   scrollbar-width: thin;
   scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
 }
+
+/* 导航栏内允许横向滚动但隐藏滚动条 */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

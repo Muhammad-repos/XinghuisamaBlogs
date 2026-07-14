@@ -7,10 +7,12 @@ import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, PanIn
 import { siteConfig } from '../siteConfig';
 
 export default function Navbar() {
-  const [showNav, setShowNav] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+
+  // 实时时钟 + 倒计时状态（导航栏左/右）
+  const [clock, setClock] = useState('--:--:--');
+  const [cd, setCd] = useState<{ title: string; d: number; h: number; m: number; passed: boolean }>({ title: '--', d: 0, h: 0, m: 0, passed: false });
 
   // --- 🌟 物理引擎：菜单转动逻辑 ---
   const wheelRef = useRef<HTMLDivElement>(null);
@@ -53,30 +55,42 @@ export default function Navbar() {
     if (isMobileMenuOpen) rawRotation.set(0);
   }, [isMobileMenuOpen, rawRotation]);
 
-  // 控制 PC 端导航栏
+  // 实时时钟与倒计时（每秒刷新）
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY > lastScrollY && currentScrollY > 80) {
-        setShowNav(false);
-      } else {
-        setShowNav(true);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const tick = () => {
+      const now = new Date();
+      setClock(`${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`);
+      const events: any[] = (siteConfig as any).countdowns || [];
+      if (events.length) {
+        const nowMs = now.getTime();
+        let ev = events.find((e: any) => new Date(e.target).getTime() > nowMs);
+        let passed = false;
+        if (!ev) { ev = events[events.length - 1]; passed = true; }
+        const diff = Math.abs(new Date(ev.target).getTime() - nowMs);
+        setCd({
+          title: ev.title,
+          d: Math.floor(diff / 86400000),
+          h: Math.floor(diff / 3600000) % 24,
+          m: Math.floor(diff / 60000) % 60,
+          passed,
+        });
       }
-      setLastScrollY(currentScrollY);
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+    tick();
+    const t = setInterval(tick, 1000);
+    return () => clearInterval(t);
+  }, []);
 
   const navLinks = [
     { name: '首页', href: '/' },
     { name: '项目', href: '/projects' },
     { name: '归档', href: '/timeline' },
+    { name: '说说', href: '/moments' },
+    { name: '杂谈', href: '/chatter' },
     { name: '照片墙', href: '/photowall' },
     { name: '音乐', href: '/music' },
     { name: '灵境', href: '/tree' },
-    { name: '说说', href: '/moments' },
-    { name: '杂谈', href: '/chatter' },
     { name: '友链', href: '/friends' },
     { name: '关于', href: '/about' },
   ];
@@ -86,26 +100,40 @@ export default function Navbar() {
 
   return (
     <>
-      {/* PC端导航栏 */}
-      <header className={`hidden md:block w-full fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b ${showNav ? 'translate-y-0' : '-translate-y-full'} bg-white/40 dark:bg-slate-900/50 backdrop-blur-xl border-white/20 dark:border-white/5 shadow-sm`}>
-        <div className="w-[90%] max-w-6xl mx-auto h-16 flex items-center justify-between px-4 sm:px-[30px] box-border">
-          <Link href="/" className="text-xl font-black text-slate-800 dark:text-white tracking-tighter hover:text-indigo-600 dark:hover:text-indigo-400 transition-all duration-300">
-            {siteConfig.navTitle || siteConfig.authorName}
-            <span className="text-indigo-500 mx-1">{siteConfig.navSuffix || 'の'}</span>
-            {siteConfig.navAfter || '宝藏之地'}
-          </Link>
-          <nav className="flex gap-8 text-sm font-bold">
-            {/* PC端依然使用全量的 navLinks */}
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href || pathname === `${link.href}/`;
-              return (
-                <Link key={link.href} href={link.href} className={`relative py-1 transition-colors ${isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-200 hover:text-indigo-600'}`}>
-                  {link.name}
-                  {isActive && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-indigo-500 rounded-full animate-pulse"></span>}
-                </Link>
-              );
-            })}
-          </nav>
+      {/* PC端导航栏（常驻显示，不随滚动隐藏） */}
+      <header className="hidden md:block w-full fixed top-0 left-0 right-0 z-50 border-b bg-white/40 dark:bg-slate-900/50 backdrop-blur-xl border-white/20 dark:border-white/5 shadow-sm">
+        <div className="w-[94%] max-w-7xl mx-auto h-16 flex items-center justify-between gap-4 px-2 box-border">
+          {/* 左侧：实时时间 */}
+          <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-200 font-mono tabular-nums text-sm shrink-0" title="当前时间">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>{clock}</span>
+          </div>
+
+          {/* 中间：Logo + 导航 */}
+          <div className="flex items-center gap-5 lg:gap-7 flex-1 justify-center min-w-0">
+            <Link href="/" className="text-lg font-black text-slate-800 dark:text-white tracking-tighter hover:text-indigo-600 dark:hover:text-indigo-400 transition-all duration-300 whitespace-nowrap shrink-0">
+              {siteConfig.navTitle || siteConfig.authorName}
+              <span className="text-indigo-500 mx-1">{siteConfig.navSuffix || 'の'}</span>
+              {siteConfig.navAfter || '宝藏之地'}
+            </Link>
+            <nav className="flex gap-3 lg:gap-6 text-sm font-bold overflow-x-auto no-scrollbar">
+              {navLinks.map((link) => {
+                const isActive = pathname === link.href || pathname === `${link.href}/`;
+                return (
+                  <Link key={link.href} href={link.href} className={`relative py-1 whitespace-nowrap transition-colors ${isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-200 hover:text-indigo-600'}`}>
+                    {link.name}
+                    {isActive && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-indigo-500 rounded-full animate-pulse"></span>}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+
+          {/* 右侧：倒计时 */}
+          <div className="flex items-center gap-1.5 text-sm font-bold text-slate-700 dark:text-slate-200 shrink-0" title={cd.passed ? '已结束' : '倒计时'}>
+            <span className="text-indigo-500 dark:text-indigo-400">{cd.title}</span>
+            <span className="font-mono tabular-nums">{cd.d}<span className="text-xs font-normal mx-0.5">天</span>{cd.h}<span className="text-xs font-normal mx-0.5">时</span>{cd.m}<span className="text-xs font-normal">分</span></span>
+          </div>
         </div>
       </header>
 

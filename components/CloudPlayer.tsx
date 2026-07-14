@@ -12,7 +12,7 @@ const formatTime = (time: number) => {
 };
 
 export default function CloudPlayer() {
-  const { playlist, currentSong, isPlaying, progress, currentTime, duration, currentLyric, isLoading, togglePlay, nextSong, prevSong, handleSeek } = useMusic();
+  const { playlist, currentSong, isPlaying, progress, currentTime, duration, currentLyric, isLoading, togglePlay, nextSong, prevSong, handleSeek, volume, isMuted, setVolume, toggleMute } = useMusic();
   const [displayedLyric, setDisplayedLyric] = useState("");
   // 🌟 初始化路由
   const router = useRouter();
@@ -153,6 +153,29 @@ export default function CloudPlayer() {
             <button onClick={safeNextSong} className="text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors drop-shadow-sm relative z-20">
                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
             </button>
+          </div>
+
+          {/* 音量控制（阻止冒泡，避免触发整卡跳转） */}
+          <div
+            className="flex items-center gap-2 mt-3"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+            onPointerDown={(e) => { e.stopPropagation(); }}
+          >
+            <button onClick={toggleMute} className="text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors relative z-20" title={isMuted ? '取消静音' : '静音'}>
+              {isMuted || volume === 0 ? (
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M3.27 2L2 3.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.94 8.94 0 003.69-1.81L19.73 21 21 19.73 3.27 2zM12 3L9.91 5.09 12 7.18V3z"/></svg>
+              ) : (
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 00-2.5-4.03v8.05A4.5 4.5 0 0016.5 12z"/></svg>
+              )}
+            </button>
+            <input
+              type="range" min="0" max="1" step="0.01"
+              value={isMuted ? 0 : volume}
+              onChange={(e) => setVolume(Number(e.target.value))}
+              className="flex-1 max-w-[160px] h-1.5 bg-white/40 dark:bg-slate-700/50 rounded-full appearance-none outline-none cursor-pointer shadow-inner"
+              style={{ background: `linear-gradient(to right, #818cf8 ${(isMuted ? 0 : volume) * 100}%, rgba(148,163,184,0.4) ${(isMuted ? 0 : volume) * 100}%)` }}
+            />
+            <span className="text-xs font-mono tabular-nums text-slate-500 dark:text-slate-400 w-8 text-right">{Math.round((isMuted ? 0 : volume) * 100)}</span>
           </div>
         </div>
       </div>

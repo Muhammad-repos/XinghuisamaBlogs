@@ -44,6 +44,12 @@ export const siteConfig = {
   chatterTitle: "云端杂谈", // 你可以改成任何你喜欢的名字
   chatterDescription: "备考、代码与生活的随手记录",
 
+  // 👇 导航栏倒计时事件（可配置）：考完试后把 target 改成下一个目标即可；可放多个，自动显示最近的一个
+  // target 格式：ISO 时间，建议带时区（+08:00）。例：2026-12-19T08:30:00+08:00
+  countdowns: [
+    { title: "考研", target: "2026-12-19T08:30:00+08:00" },
+  ],
+
 
   // 👇 【新增】：全局背景弹幕配置
   danmakuList: ["Wake up", "Don't waste your time again，", "Keep going.", "One page at a time.", "Back to the books.", "Study session on.", "Almost there.", "Coffee and code.", "Reviewing notes.", "Small steps daily.", "Stay focused.", "Reading chapter 5.", "Exam prep mode.", "Tomorrow is a new day."],
