@@ -98,6 +98,15 @@ export default function Navbar() {
   // 🌟 核心：过滤掉“灵境”，专供手机端使用，保证圆盘自动重新均匀排布
   const mobileNavLinks = navLinks.filter(link => link.href !== '/tree');
 
+  // 倒计时特效：按剩余天数分级呼吸闪烁（克制，不夸张）
+  const cdClass = cd.passed
+    ? ''
+    : cd.d <= 7
+      ? 'cd-pulse cd-pulse-critical'
+      : cd.d <= 30
+        ? 'cd-pulse cd-pulse-urgent'
+        : 'cd-pulse';
+
   return (
     <>
       {/* PC端导航栏（常驻显示，不随滚动隐藏） */}
@@ -130,8 +139,8 @@ export default function Navbar() {
           </div>
 
           {/* 右侧：倒计时 */}
-          <div className="flex items-center gap-1.5 text-sm font-bold text-slate-700 dark:text-slate-200 shrink-0" title={cd.passed ? '已结束' : '倒计时'}>
-            <span className="text-indigo-500 dark:text-indigo-400">{cd.title}</span>
+          <div className={`flex items-center gap-1.5 text-sm font-bold text-slate-700 dark:text-slate-200 shrink-0 ${cdClass}`} title={cd.passed ? '已结束' : '倒计时'}>
+            <span className="cd-title text-indigo-500 dark:text-indigo-400">{cd.title}</span>
             <span className="font-mono tabular-nums">{cd.d}<span className="text-xs font-normal mx-0.5">天</span>{cd.h}<span className="text-xs font-normal mx-0.5">时</span>{cd.m}<span className="text-xs font-normal">分</span></span>
           </div>
         </div>

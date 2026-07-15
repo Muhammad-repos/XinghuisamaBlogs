@@ -104,3 +104,15 @@ input[type=range]::-webkit-slider-thumb {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* 导航栏倒计时呼吸/闪烁特效：按剩余天数分级，克制不夸张 */
+@keyframes cdPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+.cd-pulse { animation: cdPulse 2.6s ease-in-out infinite; }
+.cd-pulse-urgent { animation-duration: 1.5s; }
+.cd-pulse-critical { animation-duration: 0.95s; }
+/* 紧迫时仅用标题文字色提示，不喧宾夺主 */
+.cd-pulse-urgent .cd-title { color: #f59e0b !important; }
+.cd-pulse-critical .cd-title { color: #ef4444 !important; }
